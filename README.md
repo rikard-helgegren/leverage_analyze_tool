@@ -39,6 +39,9 @@ and c++ compilator
 
 * g++
 
+run `sudo make install` all needed requirements,
+or `pip install -r requirements.txt` to install all pip requirements without sudo. 
+
 ### Project structure
 For getting an undestanding of this code you are recomended to start with leverage_analysis_tool.py, and then Model.py and View.py.
 
@@ -67,13 +70,13 @@ e.g.
 SP500 USA.csv
 
 ```
-Date, Close, Open
-20220103, 3, 2
-20220102, 2, 1
-20220101, 1, 0
+Date,Close,Open
+20220103,3,2
+20220102,2,1
+20220101,1,0
 ```
 
-The file path is set in *src/model/constants*
+The file path is set in *src/model/common/constants_model.py*
 
 ### Disclaimer
 

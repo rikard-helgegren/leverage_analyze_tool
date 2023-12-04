@@ -94,6 +94,7 @@ float updateCurrentInstrumentValue(Parameters parameters, float* currentValues, 
     float oneDayChange = currentValue * parameters.marketDailyChanges[parameters.indexToMarket[item]][day] * static_cast<float>(parameters.instrumentLeverages[item]);
     float currencyChange = 1.0f; //TODO change in currency for this day compared to choosen default currency
     float dailyFee;
+    float newValue;
 
     if(parameters.includeFeeStatus){
         dailyFee = currentValue * getFeeLevel(parameters.instrumentLeverages[item]);
@@ -102,6 +103,10 @@ float updateCurrentInstrumentValue(Parameters parameters, float* currentValues, 
         dailyFee = 0.0f;
     }
 
+    if (newValue < 0){
+        return 0;
+    }
+        
     return (currentValue + oneDayChange - dailyFee) * currencyChange; 
 }
 
@@ -194,5 +199,3 @@ void rebalanceInvestmentCirtificates(Parameters parameters,
 
     doRebalancing(parameters, totForRebalancing, referenceValue, currentValues, item);
 }
-
-

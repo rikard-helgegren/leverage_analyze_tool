@@ -35,11 +35,11 @@ TEST_CASE( "Test setStartValuesOfInstruments function", "[setStartValuesOfInstru
             .set_numberOfFunds(1)
             .set_numberOfLeveragedInstruments(0)
             .build();
-    float* currentValues;
+    const int arraySize = 2;  // Change size according needs
+    float currentValues[arraySize] = {-1.0, -1.0};
 
     setStartValuesOfInstruments(parameters, currentValues);
     REQUIRE(currentValues[0] == 1);
-
 
     parameters = Parameters_builder()
             .set_nrOfInstruments(2)
@@ -52,8 +52,9 @@ TEST_CASE( "Test setStartValuesOfInstruments function", "[setStartValuesOfInstru
     setStartValuesOfInstruments(parameters, currentValues);
     REQUIRE(currentValues[0] == 0.5f);
 
-
+    
     parameters = Parameters_builder()
+            .set_nrOfInstruments(2)
             .set_proportionFunds(0.5f)
             .set_proportionLeverage(0.5f)
             .set_numberOfFunds(1)

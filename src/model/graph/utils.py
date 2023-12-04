@@ -116,7 +116,12 @@ def update_value_with_daily_change(item, day, use_fees):
     else:
         dailyFee = 0
 
-    return (current_value  + oneDayChange - dailyFee) * currencyChange 
+    new_value =  (current_value  + oneDayChange - dailyFee) * currencyChange
+
+    if (new_value <= 0):
+        return 0
+
+    return new_value
 
 
 def getFeeLevel(leverage):

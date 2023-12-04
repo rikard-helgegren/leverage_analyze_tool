@@ -37,3 +37,11 @@ pytest_debug:
 
 cpp_test:
 	g++  -std=c++11 tests/runAllCppTests.cpp -o tests.out && ./tests.out
+
+install:
+	sudo apt install python3-pip
+	sudo pip install pytest
+	apt install xsel
+	apt install xclip
+
+	pip install -r requirements.txt
