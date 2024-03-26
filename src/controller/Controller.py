@@ -9,7 +9,9 @@
 
 import logging
 import src.constants as constants
+
 from src.model.Market_data_loader import Market_data_loader
+from src.controller.graph_handler import draw_line_graph
 import src.model.Model as Model
 
 
@@ -32,19 +34,21 @@ class Controller:
 
     def update_view(self):
         logging.debug("Controller: update_view")
+        self.draw_histogram()        
+        draw_line_graph(self.models, self.view)
+        self.update_table_of_statistics()
+        self.draw_pie_chart()
 
-        ### Update histogram ###
-        self.draw_histogram([model.get_results_for_intervals() for model in self.models])
+    def make_time_and_values_compatible_with_all_models(time_list, value_list):
 
-        ### Update line graph ###
-        time_interval = self.models[self.selected_model_nbr].get_common_time_interval()
-        portfolio_results_full_time_list = [model.get_portfolio_results_full_time() for model in self.models]
-        buy_sell_log_list = [model.get_buy_sell_log() for model in self.models]
-        self.draw_line_graph(portfolio_results_full_time_list, time_interval, buy_sell_log_list)
+        #time_lists_all_models = 
 
-        self.update_table_of_statistics([model.key_values.get_all_values() for model in self.models])
+        #combined_time_list = 
 
-        self.draw_pie_chart(self.models[self.selected_model_nbr].key_values.get_all_values())
+        new_time_list = time_list
+
+        return new_time_list
+
 
 
     def update_selected_model(self):
@@ -113,14 +117,12 @@ class Controller:
             self.update_all_models()
             self.update_view()
 
-    def draw_histogram(self, data):
+    def draw_histogram(self):
         logging.debug("Controller: draw_histogram")
+        data = [model.get_results_for_intervals() for model in self.models]
+
         self.view.draw_histogram(data)
 
-    def draw_line_graph(self, graph_data_list, time_interval, buy_sell_log_list):
-        logging.debug("Controller: draw_line_graph")
-        self.view.draw_line_graph(graph_data_list, time_interval, buy_sell_log_list)
-    
     def set_table_of_statistics(self):
         """ Set the table with key values"""
         logging.debug("Controller: set_table_of_statistics")
@@ -242,10 +244,13 @@ class Controller:
         self.update_all_models() #TODO can fine tune this, if time is decreased it should be done without calculations
         self.update_view()
 
-    def update_table_of_statistics(self, key_values_list):
+    def update_table_of_statistics(self):
         logging.debug("Controller: update_table_of_statistics")
+        key_values_list = [model.key_values.get_all_values() for model in self.models]
         self.view.update_table_of_statistics(key_values_list)
 
-    def draw_pie_chart(self, key_values):
+    def draw_pie_chart(self):
         logging.debug("Controller: draw_pie_chart")
+        key_values = self.models[self.selected_model_nbr].key_values.get_all_values()
+
         self.view.update_pie_chart(key_values)

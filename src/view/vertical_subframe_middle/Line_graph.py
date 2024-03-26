@@ -9,6 +9,7 @@
 import logging
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 
 from kivy.metrics import dp
 from kivy.uix.widget import Widget
@@ -55,15 +56,15 @@ class Line_graph(Widget):
         self.canvas = self.matplot.figcanvas
 
         # Place holders
-        self.values = [] 
-        self.time_span = []
+        self.values_list = [] 
+        self.time_span_list = [[]]
         self.buy_sell_log = {}
 
-    def draw(self, values_list, time_span, buy_sell_log_list):
+    def draw(self, values_list, time_span_list, buy_sell_log_list):
         logging.debug("View: Line_graph, draw")
         
         self.values_list = values_list
-        self.time_span = time_span        
+        self.time_span_list = time_span_list        
         self.buy_sell_log_list = buy_sell_log_list
 
         self._draw()
@@ -81,16 +82,20 @@ class Line_graph(Widget):
         #if clear_before_drawing: #TODO implement with this input
         self.axs.clear()
 
+        common_time, uniqe_time_list, uniqe_value_list = self.manage_incoming_time_and_values()
+
         for index in range(len(self.values_list)):
             if self.values_list[index] != []:
-                self.set_time_on_x_axis(self.axs, self.time_span)
+                self.set_time_on_x_axis(self.axs, self.time_span_list)
+                
                 if self.view.show_trades:
                     self.set_buy_and_sell_markers(self.axs, self.values_list[index], self.buy_sell_log_list[index])
+                
                 self.line1, = self.axs.plot(
-                    self.values_list[index], 
-                    color = color_graph[index], 
-                    alpha=0.5
-                )
+                        self.values_list[index], 
+                        color = color_graph[index], 
+                        alpha = 0.5)
+                
                 plt.tight_layout()
                 clear_canvas = False
         
@@ -98,6 +103,28 @@ class Line_graph(Widget):
             set_empty_ticks(self.axs)
         
         self.canvas.draw()
+
+    def manage_incoming_time_and_values(self):
+
+        common_time = self.fix_common_time()
+
+        return [1, 2, 3]
+    
+    def fix_common_time(self):
+
+        common_time = []
+
+        for time_span in self.time_span_list:
+            for date in time_span:
+                if date not in common_time:
+                    common_time.append(date)
+
+        common_time.sort()
+
+        #logging.warn(common_time)
+
+        return common_time
+
 
     def set_buy_and_sell_markers(self, axs, values, buy_sell_log):
         logging.debug("View: Line_graph, set_buy_and_sell_markers")
