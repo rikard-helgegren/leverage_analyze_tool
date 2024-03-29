@@ -126,7 +126,7 @@ class Controller:
     def set_table_of_statistics(self):
         """ Set the table with key values"""
         logging.debug("Controller: set_table_of_statistics")
-        self.update_table_of_statistics([model.key_values.get_all_values() for model in self.models])
+        self.update_table_of_statistics()
     
     def set_table_of_instruments(self):
         """ Set the table with information of available instruments"""

@@ -37,6 +37,10 @@ class Line_graph(Widget):
     """class that generate Matplotlib graph."""
     def __init__(self, view, frame):  
         super().__init__()
+        self.values_list = [] 
+        self.time_span_list = [[]]
+        self.buy_sell_log = {}
+        self.time_union = []
 
         self.view = view
 
@@ -55,17 +59,14 @@ class Line_graph(Widget):
 
         self.canvas = self.matplot.figcanvas
 
-        # Place holders
-        self.values_list = [] 
-        self.time_span_list = [[]]
-        self.buy_sell_log = {}
 
-    def draw(self, values_list, time_span_list, buy_sell_log_list):
+    def draw(self, time_union, values_list, time_span_list, buy_sell_log_list):
         logging.debug("View: Line_graph, draw")
         
         self.values_list = values_list
         self.time_span_list = time_span_list        
         self.buy_sell_log_list = buy_sell_log_list
+        self.time_union = time_union
 
         self._draw()
 
@@ -81,17 +82,16 @@ class Line_graph(Widget):
 
         #if clear_before_drawing: #TODO implement with this input
         self.axs.clear()
-
-        common_time, uniqe_time_list, uniqe_value_list = self.manage_incoming_time_and_values()
+        self.set_time_on_x_axis(self.axs)
 
         for index in range(len(self.values_list)):
             if self.values_list[index] != []:
-                self.set_time_on_x_axis(self.axs, self.time_span_list)
                 
                 if self.view.show_trades:
                     self.set_buy_and_sell_markers(self.axs, self.values_list[index], self.buy_sell_log_list[index])
                 
                 self.line1, = self.axs.plot(
+                        self.time_span_list[index],
                         self.values_list[index], 
                         color = color_graph[index], 
                         alpha = 0.5)
@@ -103,28 +103,6 @@ class Line_graph(Widget):
             set_empty_ticks(self.axs)
         
         self.canvas.draw()
-
-    def manage_incoming_time_and_values(self):
-
-        common_time = self.fix_common_time()
-
-        return [1, 2, 3]
-    
-    def fix_common_time(self):
-
-        common_time = []
-
-        for time_span in self.time_span_list:
-            for date in time_span:
-                if date not in common_time:
-                    common_time.append(date)
-
-        common_time.sort()
-
-        #logging.warn(common_time)
-
-        return common_time
-
 
     def set_buy_and_sell_markers(self, axs, values, buy_sell_log):
         logging.debug("View: Line_graph, set_buy_and_sell_markers")
@@ -165,13 +143,13 @@ class Line_graph(Widget):
 
         axs.scatter(x_values, y_values, s=circle_size, c=colors)
 
-    def set_time_on_x_axis(self, ax, time_span):
+    def set_time_on_x_axis(self, ax):
         logging.debug("View: Line_graph, set_time_on_x_axis")
         pos = []
         labels = []
 
         reference_year = ""
-        for i, time in enumerate(time_span):
+        for i, time in enumerate(self.time_union):
             #get first 4 digits, i.e. the year
             year = str(time)[:4]
             if year != reference_year:
